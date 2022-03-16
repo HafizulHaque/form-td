@@ -2,9 +2,12 @@
   <div class="row">
     <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
       
-      <form (ngSubmit)="onSubmit(f)" #f="ngForm">
+      <form (ngSubmit)="onSubmit()" #f="ngForm">
 
-        <div id="user-data">
+        <div 
+          id="user-data" 
+          ngModelGroup="userData"
+          #userData="ngModelGroup">
 
           <div class="form-group">
             <label for="username">Username</label>
@@ -13,12 +16,22 @@
               id="username" 
               class="form-control"
               ngModel
-              name="username">
+              name="userName"
+              required
+              #userNameField="ngModel">
           </div>
+          <p 
+            class="error"
+            *ngIf="userNameField.touched && !userNameField.valid">
+            Please enter a valid username
+          </p>
 
           <button 
-            class="btn btn-default" 
-            type="button">Suggest an Username</button>
+            class="btn btn-info" 
+            type="button"
+            (click)="suggestUsername()">
+            Suggest an Username
+          </button>
           
           <div class="form-group">
             <label for="email">Mail</label>
@@ -27,10 +40,22 @@
               id="email" 
               class="form-control"
               ngModel
-              name="email">
+              name="userEmail"
+              required email
+              #userEmailField="ngModel">
           </div>
+          <p 
+            class="error" 
+            *ngIf="userEmailField.touched && !userEmailField.valid">
+            Please enter a valid email
+          </p>
 
         </div>
+        <p 
+          class="error"
+          *ngIf="userData.touched && !userData.valid">
+          User Data Form Input Error
+        </p>
         <!-- div#user-data ends  -->
 
         <div class="form-group">
@@ -38,18 +63,76 @@
           <select 
             id="secret" 
             class="form-control"
-            ngModel
+            [ngModel]="defaultQuestion"
             name="secret">
             <option value="pet">Your first pet?</option>
             <option value="teacher">Your favourite teacher?</option>
           </select>
         </div>
 
+        <div style="margin-bottom: 10px;">
+          <textarea 
+            name="questionAnswer"
+            rows="3"
+            class="form-control"
+            [(ngModel)]="answer">
+          </textarea>
+          <p>Your Ans: {{answer}}</p>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <p class="form-text" style="font-weight: bold;">Select Your Gender</p>
+          <div class="radio" *ngFor="let g of genders">
+            <label [for]="g">
+              <input 
+                type="radio" 
+                name="gender" 
+                [value]="g" 
+                [id]="g"
+                [ngModel]="'female'"
+                required> 
+                {{ g }}
+            </label>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <p class="form-text" style="font-weight: bold;">Select Your Hobby</p>
+          <div class="checkbox" *ngFor="let h of hobbies">
+            <label [for]="h.name">
+              <input 
+                type="checkbox" 
+                [id]="h.name" 
+                name="hobby" 
+                [value]="h.name" 
+                [(ngModel)]="h.selected">
+                {{ h.name }}
+            </label>
+          </div>
+        </div>
+
         <button 
           class="btn btn-primary" 
-          type="submit">Submit</button>
+          type="submit"
+          [disabled]="!f.valid">
+          Submit
+        </button>
 
       </form>
+
+      <div *ngIf="isSubmitted">
+        <hr>
+        <h3>User Data</h3>
+        <hr>
+        <p>Name: {{ user.name }}</p>
+        <p>E-mail: {{ user.email }}</p>
+        <p>Gender: {{ user.gender }}</p>
+        <p>Hobby: {{ user.hobby }}</p>
+        <p>Secret Question: {{ user.secretQues }}</p>
+        <p>Name: {{ user.answer }}</p>
+      </div>
+
+
     </div>
   </div>
 </div>
